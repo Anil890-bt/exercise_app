@@ -1,9 +1,21 @@
-<header class="bg-gray-800 p-4 flex justify-between items-center shadow-md">
-    <h1 class="text-xl font-bold">Fitness App</h1>
+<header class="bg-gray-800/80 backdrop-blur-lg p-4 flex justify-between items-center shadow-xl sticky top-0 z-50 border-b border-gray-700">
+    <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-2 smooth-transition hover:opacity-80">
+            <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shadow-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent hidden sm:block">FitTrack</h1>
+        </a>
+    </div>
 
-    <a href="/profile" class="text-white bg-blue-600 px-3 py-1 rounded-full">
-        👤
+    <a href="/profile" class="text-white bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 rounded-full shadow-lg smooth-transition hover:shadow-xl hover:scale-105 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        <span class="hidden sm:inline text-sm font-medium">Profile</span>
     </a>
 </header>
 
-<main class="flex-1 p-4">
+<main class="flex-1 p-4 max-w-7xl mx-auto w-full slide-up">
