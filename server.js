@@ -146,6 +146,29 @@ app.post("/add-custom-exercise", async (req, res) => {
 });
 
 
+// ADD MUSCLE PAGE
+app.get("/add-muscle", (req, res) => {
+    const category = req.query.category || "";
+    res.render("add-muscle", { category });
+});
+
+app.post("/add-muscle", async (req, res) => {
+    try {
+        const { category, muscle } = req.body;
+
+        await db.query(
+            "INSERT INTO muscles (category, muscle_name) VALUES (?, ?)",
+            [category, muscle]
+        );
+
+        res.redirect(`/workout/${category}`);
+    } catch (err) {
+        console.error("Add Muscle Error:", err);
+        res.redirect("back");
+    }
+});
+
+
 // ADMIN DATABASE MANAGEMENT PAGE
 app.get("/admin/database", async (req, res) => {
     try {
