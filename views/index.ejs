@@ -1,37 +1,143 @@
 <%- include("partials/head", { title: "Dashboard" }) %>
 <%- include("partials/header") %>
 
-<h2 class="text-xl font-bold mb-4">Choose Workout Type</h2>
-
-<div class="grid grid-cols-2 gap-3">
-    <a href="/workout/push" class="bg-red-500 p-4 rounded text-center">Push</a>
-    <a href="/workout/pull" class="bg-green-500 p-4 rounded text-center">Pull</a>
-    <a href="/workout/legs" class="bg-yellow-500 p-4 rounded text-center">Legs</a>
-    <a href="/workout/core" class="bg-indigo-500 p-4 rounded text-center">Core</a>
+<!-- Welcome Section -->
+<div class="mb-6">
+    <h2 class="text-2xl md:text-3xl font-bold mb-2">Welcome Back!</h2>
+    <p class="text-gray-400">Ready to crush your workout?</p>
 </div>
 
-<div class="bg-gray-800 p-4 rounded mt-6">
-    <h3 class="font-bold mb-2">Stats</h3>
-    <p>Height: <%= profile.height %> cm</p>
-    <p>Weight: <%= currentWeight || "—" %> kg</p>
-    <p>BMI: <%= bmi || "—" %></p>
-
-    <a href="/weight" class="block mt-3 bg-blue-500 text-center py-2 rounded">
-        Add Daily Weight
-    </a>
-</div>
-
-<h3 class="text-xl font-bold mt-6 mb-2">Recent Workouts</h3>
-
-<div class="space-y-2">
-    <% logs.forEach(l => { %>
-    <div class="bg-gray-800 p-3 rounded">
-        <p><%= l.date.toISOString().split("T")[0] %> — <%= l.exercise %></p>
-        <p class="text-gray-400 text-sm">
-            <%= l.sets %> sets • <%= l.reps %> reps • <%= l.weight %> kg
-        </p>
+<!-- Stats Card -->
+<div class="bg-gradient-to-br from-gray-800/90 to-gray-800/50 backdrop-blur-lg p-6 rounded-2xl shadow-2xl border border-gray-700 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold flex items-center gap-2">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Your Stats
+        </h3>
+        <a href="/weight" class="text-purple-400 text-sm smooth-transition hover:text-purple-300">Update</a>
     </div>
-    <% }) %>
+
+    <div class="grid grid-cols-3 gap-4">
+        <div class="text-center bg-gray-900/50 rounded-xl p-3">
+            <p class="text-gray-400 text-xs mb-1">Height</p>
+            <p class="text-lg font-bold text-purple-400"><%= profile.height %> cm</p>
+        </div>
+        <div class="text-center bg-gray-900/50 rounded-xl p-3">
+            <p class="text-gray-400 text-xs mb-1">Weight</p>
+            <p class="text-lg font-bold text-blue-400"><%= currentWeight || "—" %> kg</p>
+        </div>
+        <div class="text-center bg-gray-900/50 rounded-xl p-3">
+            <p class="text-gray-400 text-xs mb-1">BMI</p>
+            <p class="text-lg font-bold text-green-400"><%= bmi || "—" %></p>
+        </div>
+    </div>
+</div>
+
+<!-- Workout Selection -->
+<div class="mb-6">
+    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        Choose Workout
+    </h3>
+
+    <div class="grid grid-cols-2 gap-3 sm:gap-4">
+        <a href="/workout/push" class="gradient-red p-6 rounded-2xl text-center shadow-xl card-hover group">
+            <div class="mb-3">
+                <svg class="w-12 h-12 mx-auto group-hover:scale-110 smooth-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
+                </svg>
+            </div>
+            <h4 class="font-bold text-lg">Push</h4>
+            <p class="text-xs opacity-90 mt-1">Chest, Shoulders, Triceps</p>
+        </a>
+
+        <a href="/workout/pull" class="gradient-green p-6 rounded-2xl text-center shadow-xl card-hover group">
+            <div class="mb-3">
+                <svg class="w-12 h-12 mx-auto group-hover:scale-110 smooth-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path>
+                </svg>
+            </div>
+            <h4 class="font-bold text-lg">Pull</h4>
+            <p class="text-xs opacity-90 mt-1">Back, Biceps, Traps</p>
+        </a>
+
+        <a href="/workout/legs" class="gradient-yellow p-6 rounded-2xl text-center shadow-xl card-hover group">
+            <div class="mb-3">
+                <svg class="w-12 h-12 mx-auto group-hover:scale-110 smooth-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                </svg>
+            </div>
+            <h4 class="font-bold text-lg">Legs</h4>
+            <p class="text-xs opacity-90 mt-1">Quads, Hamstrings, Calves</p>
+        </a>
+
+        <a href="/workout/core" class="gradient-indigo p-6 rounded-2xl text-center shadow-xl card-hover group">
+            <div class="mb-3">
+                <svg class="w-12 h-12 mx-auto group-hover:scale-110 smooth-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+            </div>
+            <h4 class="font-bold text-lg">Core</h4>
+            <p class="text-xs opacity-90 mt-1">Abs, Obliques, Lower Back</p>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Workouts -->
+<div>
+    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Recent Workouts
+    </h3>
+
+    <% if (logs.length === 0) { %>
+        <div class="bg-gray-800/50 backdrop-blur-lg p-8 rounded-2xl text-center border border-gray-700">
+            <svg class="w-16 h-16 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+            <p class="text-gray-400">No workouts yet</p>
+            <p class="text-gray-500 text-sm mt-1">Start your fitness journey today!</p>
+        </div>
+    <% } else { %>
+        <div class="space-y-3">
+            <% logs.forEach((l, index) => { %>
+            <div class="bg-gray-800/70 backdrop-blur-lg p-4 rounded-xl shadow-lg border border-gray-700 smooth-transition hover:bg-gray-800" style="animation-delay: <%= index * 0.1 %>s">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="font-semibold text-white"><%= l.exercise %></h4>
+                    <span class="text-xs text-gray-400 bg-gray-900/50 px-2 py-1 rounded-full">
+                        <%= l.date.toISOString().split("T")[0] %>
+                    </span>
+                </div>
+                <div class="flex gap-4 text-sm">
+                    <span class="text-purple-400 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                        <%= l.sets %> sets
+                    </span>
+                    <span class="text-blue-400 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <%= l.reps %> reps
+                    </span>
+                    <span class="text-green-400 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
+                        </svg>
+                        <%= l.weight %> kg
+                    </span>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+    <% } %>
 </div>
 
 <%- include("partials/footer") %>

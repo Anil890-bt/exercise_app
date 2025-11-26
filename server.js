@@ -43,8 +43,33 @@ app.get("/", async (req, res) => {
 
 
 // PROFILE PAGE
-app.get("/profile", (req, res) => {
-    res.render("profile", { profile: USER_PROFILE });
+app.get("/profile", async (req, res) => {
+    try {
+        const [weightRows] = await db.query(
+            "SELECT * FROM daily_weight ORDER BY date DESC LIMIT 1"
+        );
+
+        let weight = weightRows.length ? weightRows[0].weight : null;
+        let bmi = null;
+
+        if (weight) {
+            let m = USER_PROFILE.height / 100;
+            bmi = (weight / (m * m)).toFixed(1);
+        }
+
+        res.render("profile", {
+            profile: USER_PROFILE,
+            currentWeight: weight,
+            bmi
+        });
+    } catch (err) {
+        console.error("Profile Error:", err);
+        res.render("profile", {
+            profile: USER_PROFILE,
+            currentWeight: null,
+            bmi: null
+        });
+    }
 });
 
 

@@ -1,17 +1,105 @@
 <%- include("partials/head", { title: "Choose Muscle" }) %>
 <%- include("partials/header") %>
 
-<h2 class="text-xl font-bold mb-4 text-capitalize">
-    <%= category %> Day — Select Muscle
-</h2>
-
-<div class="grid grid-cols-1 gap-3">
-    <% muscles.forEach(m => { %>
-    <a href="/workout/<%= category %>/<%= m.id %>"
-       class="bg-gray-800 p-4 rounded text-center">
-       <%= m.muscle_name %>
+<!-- Back Button -->
+<div class="mb-6">
+    <a href="/" class="inline-flex items-center gap-2 text-gray-400 hover:text-white smooth-transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Dashboard
     </a>
-    <% }) %>
+</div>
+
+<!-- Page Header -->
+<div class="mb-6">
+    <h2 class="text-2xl md:text-3xl font-bold mb-2 capitalize flex items-center gap-2">
+        <%
+        let categoryIcon = '';
+        let categoryColor = '';
+        switch(category) {
+            case 'push':
+                categoryIcon = 'M7 11l5-5m0 0l5 5m-5-5v12';
+                categoryColor = 'text-red-400';
+                break;
+            case 'pull':
+                categoryIcon = 'M17 13l-5 5m0 0l-5-5m5 5V6';
+                categoryColor = 'text-green-400';
+                break;
+            case 'legs':
+                categoryIcon = 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6';
+                categoryColor = 'text-yellow-400';
+                break;
+            case 'core':
+                categoryIcon = 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15';
+                categoryColor = 'text-purple-400';
+                break;
+            default:
+                categoryIcon = 'M13 10V3L4 14h7v7l9-11h-7z';
+                categoryColor = 'text-blue-400';
+        }
+        %>
+        <svg class="w-8 h-8 <%= categoryColor %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= categoryIcon %>"></path>
+        </svg>
+        <%= category %> Day
+    </h2>
+    <p class="text-gray-400">Select a muscle group to train</p>
+</div>
+
+<!-- Muscle Groups -->
+<% if (muscles.length === 0) { %>
+    <div class="bg-gray-800/50 backdrop-blur-lg p-8 rounded-2xl text-center border border-gray-700">
+        <svg class="w-16 h-16 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <p class="text-gray-400">No muscle groups found for this category</p>
+    </div>
+<% } else { %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <% muscles.forEach((m, index) => {
+            // Assign different gradient colors for variety
+            const gradients = [
+                'from-purple-500 to-pink-500',
+                'from-blue-500 to-cyan-500',
+                'from-green-500 to-teal-500',
+                'from-orange-500 to-red-500',
+                'from-indigo-500 to-purple-500',
+                'from-pink-500 to-rose-500'
+            ];
+            const gradient = gradients[index % gradients.length];
+        %>
+        <a href="/workout/<%= category %>/<%= m.id %>"
+           class="bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 overflow-hidden smooth-transition hover:scale-105 hover:shadow-2xl hover:border-purple-500 card-hover group"
+           style="animation-delay: <%= index * 0.1 %>s">
+            <div class="bg-gradient-to-br <%= gradient %> p-6 flex items-center justify-center">
+                <svg class="w-16 h-16 group-hover:scale-110 smooth-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <div class="p-5 text-center">
+                <h3 class="text-lg font-bold mb-2"><%= m.muscle_name %></h3>
+                <div class="flex items-center justify-center gap-2 text-gray-400 text-sm">
+                    <span>Tap to select</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-1 smooth-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </div>
+        </a>
+        <% }) %>
+    </div>
+<% } %>
+
+<!-- Add Muscle Group Button (optional) -->
+<div class="mt-6">
+    <a href="/add-muscle?category=<%= category %>"
+       class="w-full bg-gray-800/50 backdrop-blur-lg p-4 rounded-xl border-2 border-dashed border-gray-600 text-gray-400 smooth-transition hover:border-purple-500 hover:text-purple-400 flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add Custom Muscle Group
+    </a>
 </div>
 
 <%- include("partials/footer") %>
