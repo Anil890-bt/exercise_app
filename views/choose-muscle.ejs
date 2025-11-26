@@ -1,0 +1,17 @@
+<%- include("partials/head", { title: "Choose Muscle" }) %>
+<%- include("partials/header") %>
+
+<h2 class="text-xl font-bold mb-4 text-capitalize">
+    <%= category %> Day — Select Muscle
+</h2>
+
+<div class="grid grid-cols-1 gap-3">
+    <% muscles.forEach(m => { %>
+    <a href="/workout/<%= category %>/<%= m.id %>"
+       class="bg-gray-800 p-4 rounded text-center">
+       <%= m.muscle_name %>
+    </a>
+    <% }) %>
+</div>
+
+<%- include("partials/footer") %>

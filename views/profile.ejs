@@ -1,0 +1,15 @@
+<%- include("partials/head", { title: "Profile" }) %>
+<%- include("partials/header") %>
+
+<h2 class="text-xl font-bold mb-4">My Profile</h2>
+
+<div class="bg-gray-800 p-4 rounded space-y-2">
+    <p><strong>Name:</strong> <%= profile.name %></p>
+    <p><strong>Gender:</strong> <%= profile.gender %></p>
+    <p><strong>DOB:</strong> <%= profile.dob %></p>
+    <p><strong>Height:</strong> <%= profile.height %> cm</p>
+    <p><strong>Weight:</strong> <%= currentWeight || "—" %> kg</p>
+    <p><strong>BMI:</strong> <%= bmi || "—" %></p>
+</div>
+
+<%- include("partials/footer") %>

@@ -1,0 +1,37 @@
+<%- include("partials/head", { title: "Dashboard" }) %>
+<%- include("partials/header") %>
+
+<h2 class="text-xl font-bold mb-4">Choose Workout Type</h2>
+
+<div class="grid grid-cols-2 gap-3">
+    <a href="/workout/push" class="bg-red-500 p-4 rounded text-center">Push</a>
+    <a href="/workout/pull" class="bg-green-500 p-4 rounded text-center">Pull</a>
+    <a href="/workout/legs" class="bg-yellow-500 p-4 rounded text-center">Legs</a>
+    <a href="/workout/core" class="bg-indigo-500 p-4 rounded text-center">Core</a>
+</div>
+
+<div class="bg-gray-800 p-4 rounded mt-6">
+    <h3 class="font-bold mb-2">Stats</h3>
+    <p>Height: <%= profile.height %> cm</p>
+    <p>Weight: <%= currentWeight || "—" %> kg</p>
+    <p>BMI: <%= bmi || "—" %></p>
+
+    <a href="/weight" class="block mt-3 bg-blue-500 text-center py-2 rounded">
+        Add Daily Weight
+    </a>
+</div>
+
+<h3 class="text-xl font-bold mt-6 mb-2">Recent Workouts</h3>
+
+<div class="space-y-2">
+    <% logs.forEach(l => { %>
+    <div class="bg-gray-800 p-3 rounded">
+        <p><%= l.date.toISOString().split("T")[0] %> — <%= l.exercise %></p>
+        <p class="text-gray-400 text-sm">
+            <%= l.sets %> sets • <%= l.reps %> reps • <%= l.weight %> kg
+        </p>
+    </div>
+    <% }) %>
+</div>
+
+<%- include("partials/footer") %>

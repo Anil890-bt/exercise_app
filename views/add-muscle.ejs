@@ -1,0 +1,13 @@
+<%- include("partials/head", { title: "Add Muscle" }) %>
+<%- include("partials/header") %>
+
+<h2 class="text-xl font-bold mb-4">Add New Muscle Group</h2>
+
+<form action="/add-muscle" method="POST" class="space-y-3">
+    <label>Muscle Name:</label>
+    <input type="text" name="muscle" class="w-full p-2 rounded text-black">
+
+    <button class="w-full bg-blue-600 py-2 rounded">Save</button>
+</form>
+
+<%- include("partials/footer") %>
