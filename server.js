@@ -46,6 +46,7 @@ app.get("/", async (req, res) => {
         );
 
         let weight = weightRows.length ? weightRows[0].weight : null;
+        let weightDate = weightRows.length ? weightRows[0].date : null;
         let bmi = null;
 
         if (weight) {
@@ -65,6 +66,7 @@ app.get("/", async (req, res) => {
         res.render("index", {
             profile: { ...USER_PROFILE, age },
             currentWeight: weight,
+            weightDate,
             bmi,
             logs: formattedLogs,
             formatDateTime
@@ -108,6 +110,32 @@ app.get("/profile", async (req, res) => {
             currentWeight: null,
             bmi: null
         });
+    }
+});
+
+
+// UPDATE PROFILE (HEIGHT & WEIGHT)
+app.post("/update-profile", async (req, res) => {
+    const { height, weight, date } = req.body;
+
+    try {
+        // Update height in USER_PROFILE (in-memory for now)
+        if (height) {
+            USER_PROFILE.height = parseInt(height);
+        }
+
+        // Update weight in database if provided
+        if (weight && date) {
+            await db.query(
+                "INSERT INTO daily_weight (date, weight) VALUES (?, ?) ON DUPLICATE KEY UPDATE weight = ?",
+                [date, weight, weight]
+            );
+        }
+
+        res.redirect("/profile");
+    } catch (err) {
+        console.error("Update Profile Error:", err);
+        res.redirect("/profile");
     }
 });
 
@@ -160,14 +188,21 @@ app.get("/workout/:category/:muscleId", async (req, res) => {
 });
 
 
-// LOG EXERCISE
+// LOG EXERCISE (with individual sets)
 app.post("/log-exercise", async (req, res) => {
-    const { date, category, muscle, exercise, sets, reps, weight } = req.body;
+    const { date, category, muscle, exercise, reps, weight } = req.body;
 
-    await db.query(
-        "INSERT INTO exercises (date, category, muscle, exercise, sets, reps, weight) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [date, category, muscle, exercise, sets, reps, weight]
-    );
+    // Handle multiple sets - reps and weight are arrays
+    const repsArray = Array.isArray(reps) ? reps : [reps];
+    const weightArray = Array.isArray(weight) ? weight : [weight];
+
+    // Insert each set as a separate record
+    for (let i = 0; i < repsArray.length; i++) {
+        await db.query(
+            "INSERT INTO exercises (date, category, muscle, exercise, sets, reps, weight) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [date, category, muscle, exercise, i + 1, repsArray[i], weightArray[i]]
+        );
+    }
 
     res.redirect("/");
 });
@@ -209,13 +244,61 @@ app.post("/add-muscle", async (req, res) => {
 });
 
 
+// ANALYTICS PAGE
+app.get("/analytics", async (req, res) => {
+    try {
+        // Get weight history
+        const [weightHistory] = await db.query(
+            "SELECT date, weight FROM daily_weight ORDER BY date ASC"
+        );
+
+        // Calculate BMI for each weight entry
+        const weightData = weightHistory.map(row => ({
+            date: row.date.toISOString().split('T')[0],
+            weight: row.weight,
+            bmi: (row.weight / Math.pow(USER_PROFILE.height / 100, 2)).toFixed(1)
+        }));
+
+        // Get muscle group workout distribution
+        const [muscleDistribution] = await db.query(
+            "SELECT muscle, COUNT(*) as count FROM exercises GROUP BY muscle ORDER BY count DESC"
+        );
+
+        // Get recent workout logs with progression
+        const [workoutLogs] = await db.query(
+            "SELECT date, category, muscle, exercise, sets, reps, weight FROM exercises ORDER BY date DESC LIMIT 50"
+        );
+
+        // Get exercise progression (track max weight for each exercise over time)
+        const [exerciseProgression] = await db.query(
+            "SELECT exercise, date, MAX(weight) as max_weight FROM exercises GROUP BY exercise, date ORDER BY date ASC"
+        );
+
+        res.render("analytics", {
+            profile: USER_PROFILE,
+            weightData,
+            muscleDistribution,
+            workoutLogs,
+            exerciseProgression
+        });
+    } catch (err) {
+        console.error("Analytics Error:", err);
+        res.send("Error loading analytics page");
+    }
+});
+
+
 // ADMIN DATABASE MANAGEMENT PAGE
 app.get("/admin/database", async (req, res) => {
     try {
         const [muscles] = await db.query("SELECT * FROM muscles ORDER BY category, muscle_name");
+        const [exercises] = await db.query(
+            "SELECT el.*, m.muscle_name, m.category FROM exercise_library el LEFT JOIN muscles m ON el.muscle_id = m.id ORDER BY m.category, m.muscle_name, el.exercise_name"
+        );
 
         res.render("admin-database", {
             muscles,
+            exercises,
             muscleSuccess: false,
             exerciseSuccess: false
         });

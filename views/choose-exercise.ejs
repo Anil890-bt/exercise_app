@@ -1,0 +1,212 @@
+<%- include("partials/head", { title: "Choose Exercise" }) %>
+<%- include("partials/header") %>
+
+<!-- Back Button -->
+<div class="mb-4">
+    <a href="/workout/<%= category %>" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 smooth-transition text-sm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back
+    </a>
+</div>
+
+<!-- Page Header -->
+<div class="mb-5">
+    <h2 class="text-xl md:text-2xl font-bold mb-2 flex items-center gap-2 text-gray-900">
+        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        Choose Exercise
+    </h2>
+    <p class="text-gray-600 text-sm">Select an exercise to log your workout</p>
+</div>
+
+<!-- Exercises List -->
+<% if (exercises.length === 0) { %>
+    <div class="bg-white rounded-xl p-8 text-center border border-gray-200 shadow-sm mb-4">
+        <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <p class="text-gray-600 text-sm mb-2">No exercises found</p>
+        <p class="text-gray-500 text-xs">Add a custom exercise to get started</p>
+    </div>
+<% } else { %>
+    <div class="grid grid-cols-1 gap-3 mb-4">
+        <% exercises.forEach((ex, index) => { %>
+        <button onclick="openLogModal('<%= ex.exercise_name %>', '<%= ex.muscle_id %>')"
+                class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-left smooth-transition hover:shadow-md hover:border-blue-300 group"
+                style="animation-delay: <%= index * 0.05 %>s">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900"><%= ex.exercise_name %></h3>
+                        <p class="text-xs text-gray-500">Tap to log workout</p>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:translate-x-1 group-hover:text-blue-500 smooth-transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+        </button>
+        <% }) %>
+    </div>
+<% } %>
+
+<!-- Add Custom Exercise -->
+<div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm mb-4">
+    <h3 class="font-semibold mb-3 text-gray-700 flex items-center gap-2 text-sm">
+        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add Custom Exercise
+    </h3>
+    <form action="/add-custom-exercise" method="POST" class="flex gap-2">
+        <input type="hidden" name="muscleId" value="<%= muscleId %>">
+        <input type="text" name="exerciseName"
+               class="flex-1 p-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 smooth-transition text-sm"
+               placeholder="e.g., Dumbbell Curl" required>
+        <button type="submit"
+                class="bg-green-500 text-white px-4 py-3 rounded-lg font-medium shadow-sm smooth-transition hover:bg-green-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+        </button>
+    </form>
+</div>
+
+<!-- Log Exercise Modal -->
+<div id="logExerciseModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 max-w-md w-full slide-up max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                Log Workout
+            </h3>
+            <button onclick="closeLogModal()" class="text-gray-400 hover:text-gray-600 smooth-transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <form id="workoutForm" action="/log-exercise" method="POST" class="space-y-4">
+            <input type="hidden" name="category" value="<%= category %>">
+            <input type="hidden" name="exercise" id="modalExerciseName">
+            <input type="hidden" name="muscle" id="modalMuscleId">
+
+            <div>
+                <p class="text-gray-600 text-xs mb-1">Exercise</p>
+                <p id="displayExerciseName" class="text-base font-semibold text-gray-900"></p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2 text-gray-700">Date</label>
+                <input type="date" name="date"
+                       class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 smooth-transition text-sm"
+                       value="<%= new Date().toISOString().split('T')[0] %>" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2 text-gray-700">Number of Sets</label>
+                <input type="number" id="numSets" min="1" max="20"
+                       class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 smooth-transition text-sm"
+                       placeholder="3" value="3" required onchange="generateSetInputs()">
+            </div>
+
+            <div id="setsContainer" class="space-y-3">
+                <!-- Set inputs will be generated here -->
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeLogModal()"
+                        class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium smooth-transition hover:bg-gray-200 text-sm">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semibold shadow-sm smooth-transition hover:bg-blue-600 text-sm">
+                    Save Workout
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openLogModal(exerciseName, muscleId) {
+        document.getElementById('modalExerciseName').value = exerciseName;
+        document.getElementById('displayExerciseName').textContent = exerciseName;
+        document.getElementById('modalMuscleId').value = muscleId;
+        document.getElementById('logExerciseModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        // Generate initial set inputs
+        generateSetInputs();
+    }
+
+    function closeLogModal() {
+        document.getElementById('logExerciseModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        // Reset form
+        document.getElementById('workoutForm').reset();
+        document.getElementById('numSets').value = 3;
+    }
+
+    function generateSetInputs() {
+        const numSets = parseInt(document.getElementById('numSets').value) || 3;
+        const container = document.getElementById('setsContainer');
+
+        container.innerHTML = '';
+
+        for (let i = 1; i <= numSets; i++) {
+            const setDiv = document.createElement('div');
+            setDiv.className = 'bg-gray-50 rounded-lg p-3 border border-gray-200';
+            setDiv.innerHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-bold flex items-center justify-center">
+                        ${i}
+                    </div>
+                    <span class="text-sm font-semibold text-gray-700">Set ${i}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Reps</label>
+                        <input type="number" name="reps[]" min="1"
+                               class="w-full p-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:border-blue-500 smooth-transition text-sm"
+                               placeholder="12" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Weight (kg)</label>
+                        <input type="number" step="0.5" name="weight[]" min="0"
+                               class="w-full p-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:border-blue-500 smooth-transition text-sm"
+                               placeholder="20" required>
+                    </div>
+                </div>
+            `;
+            container.appendChild(setDiv);
+        }
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeLogModal();
+        }
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('logExerciseModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'logExerciseModal') {
+            closeLogModal();
+        }
+    });
+</script>
+
+<%- include("partials/footer") %>
